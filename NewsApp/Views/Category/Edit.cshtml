@@ -1,0 +1,29 @@
+﻿@model Category
+@{
+    Layout = null;
+}
+<form asp-action="EditCategory" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="@Model.Name" class="control-label"></label>
+                <input type="text" asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Description" class="control-label"></label>
+                <input type="text" asp-for="@Model.Description" class="form-control" />
+                <span asp-validation-for="@Model.Description" class="text-danger"></span>
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-success float-right">Save</button>
+            <a class="btn btn-outline-secondary" asp-controller="Category" asp-action="Index">Show all</a>
+        </div>
+    </div>
+</form>

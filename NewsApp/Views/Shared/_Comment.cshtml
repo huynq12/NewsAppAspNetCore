@@ -1,0 +1,63 @@
+﻿@using NewsApp.ViewModels;
+@model CommentDto
+
+@{
+    List<CommentDto> listcomment = ViewBag.ListComments;
+    CommentDto commentDto = ViewBag.CommentDto;
+
+
+}
+
+<ul id="commentList">
+    @foreach (var item in listcomment)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@item.UserFullname</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">@item.Rate</h6>
+                <p class="card-text">@item.CommentMsg</p>
+                <a asp-action="DeleteComment" asp-route-id="@item.Id" class="card-link">Remove</a>
+            </div>
+        </div>
+    }
+</ul>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="LeaveComment" onsubmit="return jQueryAjaxPost(this);">
+            <input type="hidden" asp-for="@Model.PostId" />
+            <input type="hidden" asp-for="@Model.UserId" />
+            <div class="mb-3">
+                <label class="form-label">Write your Comment</label>
+                <span class="text-warning float-end">
+                    <i class="ratingStar fas fa-star" data-value="1"></i>
+                    <i class="ratingStar far fa-star" data-value="2"></i>
+                    <i class="ratingStar far fa-star" data-value="3"></i>
+                    <i class="ratingStar far fa-star" data-value="4"></i>
+                    <i class="ratingStar far fa-star" data-value="5"></i>
+                </span>
+
+                <input type="hidden" name="rating" id="ratingsValue" value="1" />
+                <input class="form-control" asp-for="CommentMsg" placeholder="Write ur comments"/>
+
+            </div>
+            <button class="btn btn-success" id="btnComment" type="button">Leave a Review</button>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+}
+
+
+
+
+
+
+
+

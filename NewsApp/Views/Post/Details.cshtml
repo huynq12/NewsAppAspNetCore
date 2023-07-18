@@ -1,0 +1,161 @@
+﻿@using NewsApp.ViewModels;
+
+@model PostDto
+
+@{
+    List<CommentDto> listcomment = ViewBag.ListComments;
+
+
+}
+
+<h4>Post</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                @Html.ListBoxFor(model => model.CategoryIds,
+                new MultiSelectList(Model.SelectListCats,"Value","Text"),
+                new {@class="form-control",multiple="multiple",id="Categories_dropdown"})
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+<div class="mt-2">
+    <h5 class="mb-4">Comments</h5>
+    <form class="row g-3" id="commentForm">
+        <input type="hidden" id="postid" value="@Model.Id" />
+        <input type="hidden" id="userid" value="@ViewBag.UserId" />
+        <!-- Rating -->
+        <div class="col-12">
+            <select id="rating" class="form-select  js-choice">
+                <option value="5" selected="">★★★★★ (5/5)</option>
+                <option value="4">★★★★☆ (4/5)</option>
+                <option value="3">★★★☆☆ (3/5)</option>
+                <option value="2">★★☆☆☆ (2/5)</option>
+                <option value="1">★☆☆☆☆ (1/5)</option>
+            </select>
+        </div>
+        <!-- Message -->
+        <div class="col-12">
+            <textarea class="form-control" id="commentContent" placeholder="Write your comment" rows="3"></textarea>
+        </div>
+        <!-- Button -->
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary mb-0">Leave a comment</button>
+
+
+        </div>
+    </form>
+</div>
+<div class="col-12" id="commentList">
+    @foreach (var item in listcomment)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@item.UserFullname</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">@item.Rate</h6>
+                <p class="card-text">@item.CommentMsg</p>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <div class="comment">
+                        <input type="hidden" id="commentid" value="@item.Id">
+                        <button onclick="deleteComment(@item.Id)" class="btn btn-danger">Remove</button>
+                    </div>
+                }
+                
+            </div>
+        </div>
+    }
+</div>
+
+
+<div>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <a class="btn btn-warning" onclick="showInPopup('@Url.Action("Edit","Post",new{id=Model.Id},Context.Request.Scheme)','Update Post')">Edit</a>
+
+    }
+    <a asp-action="Index" class="btn btn-danger">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#Categories_dropdown').multiselect();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện submit form
+            $("#commentForm").submit(function (e) {
+                e.preventDefault();
+
+                var postid = $("#postid").val();
+                var content = $("#commentContent").val();
+                var rating = $("#rating").val();
+
+                // Gửi yêu cầu AJAX để tạo comment
+                $.ajax({
+                    url: "/Post/AddComment",
+                    type: "POST",
+                    data: {
+                        postid: postid,
+                        commentmsg: content,
+                        rate : rating,
+                    },
+                    success: function (result) {
+                        // Thêm comment mới vào danh sách
+                        //var commentItem = "<li>" + result.content + "</li>";
+                        //$("#commentList").append(commentItem);
+                        location.reload();
+
+                        // Xóa nội dung trong textarea
+                        $("#commentContent").val("");
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        function deleteComment(commentid) {
+            // Gửi Ajax request
+            $.ajax({
+                url: '/Post/RemoveComment',
+                type: 'POST',
+                data: { commentid: commentid },
+                success: function (result) {
+                    // Xử lý thành công
+                    console.log("Comment deleted successfully.");
+                    location.reload(); // Reload trang sau khi xoá thành công
+                },
+                error: function () {
+                    // Xử lý lỗi
+                    console.error("An error occurred while deleting the comment.");
+                }
+            });
+        }
+    </script>
+}
