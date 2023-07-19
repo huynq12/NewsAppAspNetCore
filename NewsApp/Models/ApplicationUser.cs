@@ -7,5 +7,8 @@ namespace NewsApp.Models
 		public string? FullName { get; set; }
 		public string? Email { get; set; }
 		public string? PhoneNumber { get;set; }
+		public bool? IsLocked { get; set; }
+		public List<Comment>? Comments { get; set; }
+		public Rating? Rating { get; set; }
 	}
 }

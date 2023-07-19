@@ -35,9 +35,9 @@ namespace NewsApp.Repository
 
         }
 
-        public async Task<ReportedList<Post,double>> GetTopPostsRate()
+        public async Task<ReportedList<Post, double>> GetTopPostsRate()
         {
-            var topPosts =  _context.Comments
+            var topPosts = _context.Ratings
                 .GroupBy(c => c.PostId)
                 .Select(g => new
                 {
@@ -47,18 +47,18 @@ namespace NewsApp.Repository
                 .OrderByDescending(g => g.AverageRating)
                 .Take(10)
                 .Join(_context.Posts, cm => cm.PostId, p => p.Id, (cm, p) => new { Post = p, AverageRate = cm.AverageRating });
-                
+
 
             List<Post> list = new List<Post>();
             List<double> averageRatingList = new List<double>();
-            
+
             foreach (var post in topPosts)
             {
                 list.Add(post.Post);
                 averageRatingList.Add(post.AverageRate);
             }
 
-            return new ReportedList<Post,double>(list, averageRatingList);
+            return new ReportedList<Post, double>(list, averageRatingList);
 
         }
 

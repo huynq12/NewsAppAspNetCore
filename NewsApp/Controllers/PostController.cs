@@ -19,18 +19,21 @@ namespace NewsApp.Controllers
 		private readonly IPostRepository _postRepository;
 		private readonly ICategoryReppository _categoryRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IRatingRepository _ratingRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
 		public PostController(IPostRepository postRepository,
             ICategoryReppository categoryReppository,
             ICommentRepository commentRepository,
+            IRatingRepository ratingRepository,
             UserManager<ApplicationUser> userManager,
             IMapper mapper) 
         {
 			_postRepository = postRepository;
 			_categoryRepository = categoryReppository;
             _commentRepository = commentRepository;
+            _ratingRepository = ratingRepository;
             _userManager = userManager;
             _mapper = mapper;
 		}
@@ -127,26 +130,10 @@ namespace NewsApp.Controllers
                 Value = x.Id.ToString()
             }).ToList();
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(userId == null)
-            {
-                return RedirectToAction("Index", "Post");
-            }
-            var user = await _userManager.FindByIdAsync(userId);
-
             ViewBag.PostId = id;
+            ViewBag.ListComments = await _commentRepository.GetComments(id);
 
-            List<Comment> listComments = await _commentRepository.GetComments(id);
-            ViewBag.ListComments = listComments.Select(x => new CommentDto
-            {
-                Id = x.Id,
-                CommentMsg = x.CommentMsg,
-                PostId = id,
-                CreatedTime = x.CreatedTime,
-                UserId = userId,
-                UserFullname = user.FullName,
-                Rate = x.Rate,
-            }).ToList();
+            ViewBag.ListRatings = await _ratingRepository.GetRatingsByPostId(id);
 
             return View(model);
         }
@@ -231,7 +218,7 @@ namespace NewsApp.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddComment(int postid,string commentmsg,int rate)
+        public async Task<IActionResult> AddComment(int postid,string commentmsg)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
@@ -242,7 +229,6 @@ namespace NewsApp.Controllers
             comment.CommentMsg = commentmsg;
             comment.UserId = userId;
             comment.CreatedTime = DateTime.Now;
-            comment.Rate = rate;
             await _commentRepository.CreateComment(comment);
 
             return Json(comment);
@@ -260,7 +246,61 @@ namespace NewsApp.Controllers
             return Json(new {success = true});
         }
 
+        [Authorize]
+        public async Task<IActionResult> AddOrUpdateRating(int postid,int rate)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            if(userId == null)
+            {
+                return BadRequest();
+            }
+            ViewBag.UserId = userId;
+
+
+            if(!await _ratingRepository.HasRating(postid, userId))
+            {
+                var rating = new Rating();
+                rating.Rate = rate;
+                rating.PostId = postid;
+                rating.UserId = userId;
+                rating.CreatedAt = DateTime.Now;
+                await _ratingRepository.CreateRating(rating);
+                return Json(rating);
+            }
+            else
+            {
+                var existingRating = await _ratingRepository.GetRatingByUserId(userId);
+                if (existingRating == null)
+                {
+                    return BadRequest();
+                }
+                ViewBag.RateId = existingRating.Id;
+
+                existingRating.Rate = rate;
+                await _ratingRepository.Update(existingRating);
+                return Json(existingRating);
+            }
+            
+
+            
+            
+
+
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveRating(int ratingid)
+        {
+            var existingRating = await _ratingRepository.GetRatingById(ratingid);
+            if (existingRating == null)
+            {
+                return BadRequest();
+            }
+            await _ratingRepository.Delete(existingRating);
+            return Json(new { success = true });
+        }
 
 
     }

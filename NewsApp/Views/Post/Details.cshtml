@@ -3,8 +3,9 @@
 @model PostDto
 
 @{
-    List<CommentDto> listcomment = ViewBag.ListComments;
-
+    List<Comment> listcomment = ViewBag.ListComments;
+    List<Rating> listratings = ViewBag.ListRatings;
+    
 
 }
 
@@ -42,9 +43,11 @@
 <hr />
 <div class="mt-2">
     <h5 class="mb-4">Comments</h5>
-    <form class="row g-3" id="commentForm">
+    <form class="row g-3" id="ratingForm">
         <input type="hidden" id="postid" value="@Model.Id" />
         <input type="hidden" id="userid" value="@ViewBag.UserId" />
+        <input type="hidden" id="rateid" value="@ViewBag.RateId"
+        
         <!-- Rating -->
         <div class="col-12">
             <select id="rating" class="form-select  js-choice">
@@ -55,25 +58,62 @@
                 <option value="1">★☆☆☆☆ (1/5)</option>
             </select>
         </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary mb-0">Review</button>
+
+        </div>
+    </form>
+    <form class="row g-3 mt-4" id="commentForm">
+        <input type="hidden" id="postid" value="@Model.Id" />
+        <input type="hidden" id="userid" value="@ViewBag.UserId" />
+        <!-- Rating -->
+        
         <!-- Message -->
         <div class="col-12">
             <textarea class="form-control" id="commentContent" placeholder="Write your comment" rows="3"></textarea>
         </div>
         <!-- Button -->
         <div class="col-12">
-            <button type="submit" class="btn btn-primary mb-0">Leave a comment</button>
-
+            <button type="submit" class="btn btn-primary mb-0">Comment</button>
 
         </div>
     </form>
 </div>
+
+
+@*reivews*@
+<div class="col-12 mt-3" id="ratingList">
+    @foreach (var item in listratings)
+    {
+        <div class="card mt-1">
+            <div class="card-body">
+                <h5 class="card-title">@item.User.FullName</h5>
+                <p class="card-text">
+                @for(int i = 1; i <= item.Rate; i++)
+                {
+                        <span>★</span>
+
+                }
+                </p>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <div class="rating">
+                        <input type="hidden" id="ratingid" value="@item.Id">
+                        <button onclick="deleteRating(@item.Id)" class="btn btn-danger">Remove</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+</div>
 <div class="col-12" id="commentList">
     @foreach (var item in listcomment)
     {
-        <div class="card">
+        <div class="card mt-1">
             <div class="card-body">
-                <h5 class="card-title">@item.UserFullname</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">@item.Rate</h6>
+                <h5 class="card-title">@item.User.FullName</h5>
+                @*<h6 class="card-subtitle mb-2 text-body-secondary">@item.Rate</h6>*@
                 <p class="card-text">@item.CommentMsg</p>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
@@ -89,7 +129,7 @@
 </div>
 
 
-<div>
+<div class="mt-4">
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
     {
         <a class="btn btn-warning" onclick="showInPopup('@Url.Action("Edit","Post",new{id=Model.Id},Context.Request.Scheme)','Update Post')">Edit</a>
@@ -109,30 +149,25 @@
     </script>
     <script>
         $(document).ready(function () {
-            // Lắng nghe sự kiện submit form
+
             $("#commentForm").submit(function (e) {
                 e.preventDefault();
 
                 var postid = $("#postid").val();
                 var content = $("#commentContent").val();
-                var rating = $("#rating").val();
-
-                // Gửi yêu cầu AJAX để tạo comment
+                
                 $.ajax({
                     url: "/Post/AddComment",
                     type: "POST",
                     data: {
                         postid: postid,
                         commentmsg: content,
-                        rate : rating,
+                       // rate : rating,
                     },
                     success: function (result) {
-                        // Thêm comment mới vào danh sách
-                        //var commentItem = "<li>" + result.content + "</li>";
-                        //$("#commentList").append(commentItem);
+                        
                         location.reload();
 
-                        // Xóa nội dung trong textarea
                         $("#commentContent").val("");
                     }
                 });
@@ -147,13 +182,59 @@
                 type: 'POST',
                 data: { commentid: commentid },
                 success: function (result) {
-                    // Xử lý thành công
-                    console.log("Comment deleted successfully.");
+                    //console.log("Comment deleted successfully.");
                     location.reload(); // Reload trang sau khi xoá thành công
                 },
                 error: function () {
-                    // Xử lý lỗi
+                    
                     console.error("An error occurred while deleting the comment.");
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            $("#ratingForm").submit(function (e) {
+                e.preventDefault();
+
+                var postid = $("#postid").val();
+                var rating = $("#rating").val();
+                //var rateid = $("#rateid").val();
+
+                $.ajax({
+                    url: "/Post/AddOrUpdateRating",
+                    type: "POST",
+                    data: {
+                        postid: postid,
+                        rate : rating,
+                        //rateid : rateid
+                    },
+                    success: function (result) {
+
+                        location.reload();
+
+                        $("#rating").val("");
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        function deleteRating(ratingid) {
+
+            $.ajax({
+                url: '/Post/RemoveRating',
+                type: 'POST',
+                data: { ratingid: ratingid },
+                success: function (result) {
+                 
+                    console.log("Rating deleted successfully.");
+                    location.reload(); // Reload trang sau khi xoá thành công
+                },
+                error: function () {
+
+                    console.error("An error occurred while deleting the rating.");
                 }
             });
         }

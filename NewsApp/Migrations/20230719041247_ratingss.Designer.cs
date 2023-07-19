@@ -12,8 +12,8 @@ using NewsApp.Data;
 namespace NewsApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230707082502_initdb")]
-    partial class initdb
+    [Migration("20230719041247_ratingss")]
+    partial class ratingss
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,8 +178,10 @@ namespace NewsApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsLocked")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -199,7 +201,6 @@ namespace NewsApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -236,6 +237,9 @@ namespace NewsApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,6 +247,91 @@ namespace NewsApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.CategoryImages", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CatImageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId", "CatImageId");
+
+                    b.HasIndex("CatImageId");
+
+                    b.ToTable("CategoryImages");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentMsg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Upload")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.ImageCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImageCategories");
                 });
 
             modelBuilder.Entity("NewsApp.Models.Post", b =>
@@ -253,11 +342,14 @@ namespace NewsApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -282,6 +374,35 @@ namespace NewsApp.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("PostCategories");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -335,15 +456,45 @@ namespace NewsApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NewsApp.Models.CategoryImages", b =>
+                {
+                    b.HasOne("NewsApp.Models.ImageCategory", "Category")
+                        .WithMany("CategoryImages")
+                        .HasForeignKey("CatImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NewsApp.Models.Image", "Image")
+                        .WithMany("CategoryImages")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.Comment", b =>
+                {
+                    b.HasOne("NewsApp.Models.ApplicationUser", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("NewsApp.Models.PostCategory", b =>
                 {
-                    b.HasOne("NewsApp.Models.Post", "Post")
+                    b.HasOne("NewsApp.Models.Category", "Category")
                         .WithMany("PostCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NewsApp.Models.Category", "Category")
+                    b.HasOne("NewsApp.Models.Post", "Post")
                         .WithMany("PostCategories")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -354,9 +505,38 @@ namespace NewsApp.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("NewsApp.Models.Rating", b =>
+                {
+                    b.HasOne("NewsApp.Models.ApplicationUser", "User")
+                        .WithOne("Rating")
+                        .HasForeignKey("NewsApp.Models.Rating", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Rating")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("NewsApp.Models.Category", b =>
                 {
                     b.Navigation("PostCategories");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.Image", b =>
+                {
+                    b.Navigation("CategoryImages");
+                });
+
+            modelBuilder.Entity("NewsApp.Models.ImageCategory", b =>
+                {
+                    b.Navigation("CategoryImages");
                 });
 
             modelBuilder.Entity("NewsApp.Models.Post", b =>

@@ -12,7 +12,7 @@ namespace NewsApp.Models
 		public string Content { get; set; }
 		public string? Description { get; set; }
 		public DateTime CreatedAt { get; set; }
-		
 		public ICollection<PostCategory> PostCategories{ get; set; }
+		
 	}
 }

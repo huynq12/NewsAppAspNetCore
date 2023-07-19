@@ -22,13 +22,13 @@ namespace NewsApp.Controllers
             return View(result);
         }
 
-		public async Task<IActionResult> TopPostRate()
-		{
-			var result = await _reportRepository.GetTopPostsRate();
-			return View(result);
-		}
+        public async Task<IActionResult> TopPostRate()
+        {
+            var result = await _reportRepository.GetTopPostsRate();
+            return View(result);
+        }
 
-		public async Task<IActionResult> TopPostReview()
+        public async Task<IActionResult> TopPostReview()
 		{
 			var result = await _reportRepository.GetTopPostsReview();
 			return View(result);

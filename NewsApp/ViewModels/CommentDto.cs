@@ -8,6 +8,6 @@
         public string UserId { get; set; }
         public string UserFullname { get; set; }
         public DateTime CreatedTime { get; set; }
-        public int Rate { get; set; }
+       
     }
 }
