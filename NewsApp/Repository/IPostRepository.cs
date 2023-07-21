@@ -8,10 +8,11 @@ namespace NewsApp.Repository
     {
         Task<PagedList<Post>> GetPosts(Filter filter);
         Task<List<Post>> GetAllPosts();
-        Task<Post> GetPostById (int id);
+        Task<Post> GetPostById(int id);
         Task<Post> CreatePost(Post post);
         Task<Post> UpdatePost(Post post);
         Task<Post> DeletePost(Post post);
         Task<List<PostCategory>> DelPostCatgories(List<PostCategory> postCategories);
+        Task<bool> HasCategoryId(int[] categoryIds);
     }
 }

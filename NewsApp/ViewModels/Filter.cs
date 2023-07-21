@@ -7,9 +7,9 @@ namespace NewsApp.ViewModels
 {
 	public class Filter : PagingParameters
 	{
-		public FilterOrder FilterOrder { get; set; }
+		public FilterOrder? FilterOrder { get; set; }
 
-        public List<SelectListItem> SelectListCats { get; set; }
+        public List<SelectListItem>? SelectListCats { get; set; }
         [Display(Name = "Categories")]
         public int[]? CategoryIds { get; set; }
     }

@@ -6,25 +6,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.IdentityModel.Tokens;
 using NewsApp.Models;
-using NewsApp.Repository;
 using NewsApp.ViewModels;
 using NewsApp.ViewModels.Seedwork;
 using System.Security.Claims;
-using System.Net.WebSockets;
+using NewsApp.Repository;
+using NewsApp.Data;
 
 namespace NewsApp.Controllers
 {
-	public class PostController : Controller
+    public class PostController : Controller
 	{
 		private readonly IPostRepository _postRepository;
-		private readonly ICategoryReppository _categoryRepository;
+		private readonly ICategoryRepository _categoryRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IRatingRepository _ratingRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DataContext _context;
         private readonly IMapper _mapper;
 
 		public PostController(IPostRepository postRepository,
-            ICategoryReppository categoryReppository,
+            ICategoryRepository categoryReppository,
             ICommentRepository commentRepository,
             IRatingRepository ratingRepository,
             UserManager<ApplicationUser> userManager,
@@ -51,12 +52,21 @@ namespace NewsApp.Controllers
             }).ToList();
 
             ViewBag.Filter = filter;
-
+            /*if (!await _postRepository.HasCategoryId(filter.CategoryIds))
+            {
+                
+            }
+            else { 
+                ViewBag.CategoryId = filter.CategoryIds[0];
+                using dropdownlist helper
+            }*/
             PagedList<Post> result = await _postRepository.GetPosts(filter);
 
             return View(result);
-        }
 
+
+        }
+       
 
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create()
@@ -267,6 +277,8 @@ namespace NewsApp.Controllers
                 rating.CreatedAt = DateTime.Now;
                 await _ratingRepository.CreateRating(rating);
                 return Json(rating);
+
+                
             }
             else
             {
@@ -281,12 +293,6 @@ namespace NewsApp.Controllers
                 await _ratingRepository.Update(existingRating);
                 return Json(existingRating);
             }
-            
-
-            
-            
-
-
 
         }
 

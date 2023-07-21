@@ -11,10 +11,10 @@ namespace NewsApp.Controllers
     [Authorize(Roles = UserRoles.Admin)]
     public class CategoryController : Controller
     {
-        private readonly ICategoryReppository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
 		private readonly IMapper _mapper;
 
-		public CategoryController(ICategoryReppository category,IMapper mapper)
+		public CategoryController(ICategoryRepository category,IMapper mapper)
         {
             _categoryRepository = category;
             _mapper = mapper;

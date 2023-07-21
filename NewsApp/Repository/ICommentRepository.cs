@@ -6,8 +6,8 @@ namespace NewsApp.Repository
     {
         Task<List<Comment>> GetComments(int postId);
         Task<Comment> GetCommentById(int id);
-        Task<Comment> CreateComment (Comment comment);
-        Task<Comment> UpdateComment (Comment comment);
-        Task<Comment> DeleteComment (Comment comment);
+        Task<Comment> CreateComment(Comment comment);
+        Task<Comment> UpdateComment(Comment comment);
+        Task<Comment> DeleteComment(Comment comment);
     }
 }

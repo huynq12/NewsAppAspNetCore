@@ -5,7 +5,7 @@
 @{
     List<Comment> listcomment = ViewBag.ListComments;
     List<Rating> listratings = ViewBag.ListRatings;
-    
+
 
 }
 
@@ -47,7 +47,7 @@
         <input type="hidden" id="postid" value="@Model.Id" />
         <input type="hidden" id="userid" value="@ViewBag.UserId" />
         <input type="hidden" id="rateid" value="@ViewBag.RateId"
-        
+
         <!-- Rating -->
         <div class="col-12">
             <select id="rating" class="form-select  js-choice">
@@ -67,7 +67,6 @@
         <input type="hidden" id="postid" value="@Model.Id" />
         <input type="hidden" id="userid" value="@ViewBag.UserId" />
         <!-- Rating -->
-        
         <!-- Message -->
         <div class="col-12">
             <textarea class="form-control" id="commentContent" placeholder="Write your comment" rows="3"></textarea>
@@ -89,11 +88,11 @@
             <div class="card-body">
                 <h5 class="card-title">@item.User.FullName</h5>
                 <p class="card-text">
-                @for(int i = 1; i <= item.Rate; i++)
-                {
+                    @for (int i = 1; i <= item.Rate; i++)
+                    {
                         <span>★</span>
 
-                }
+                    }
                 </p>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
@@ -122,7 +121,7 @@
                         <button onclick="deleteComment(@item.Id)" class="btn btn-danger">Remove</button>
                     </div>
                 }
-                
+
             </div>
         </div>
     }
@@ -155,17 +154,17 @@
 
                 var postid = $("#postid").val();
                 var content = $("#commentContent").val();
-                
+
                 $.ajax({
                     url: "/Post/AddComment",
                     type: "POST",
                     data: {
                         postid: postid,
                         commentmsg: content,
-                       // rate : rating,
+                        // rate : rating,
                     },
                     success: function (result) {
-                        
+
                         location.reload();
 
                         $("#commentContent").val("");
@@ -186,7 +185,7 @@
                     location.reload(); // Reload trang sau khi xoá thành công
                 },
                 error: function () {
-                    
+
                     console.error("An error occurred while deleting the comment.");
                 }
             });
@@ -207,7 +206,7 @@
                     type: "POST",
                     data: {
                         postid: postid,
-                        rate : rating,
+                        rate: rating,
                         //rateid : rateid
                     },
                     success: function (result) {
@@ -228,7 +227,7 @@
                 type: 'POST',
                 data: { ratingid: ratingid },
                 success: function (result) {
-                 
+
                     console.log("Rating deleted successfully.");
                     location.reload(); // Reload trang sau khi xoá thành công
                 },

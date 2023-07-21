@@ -2,7 +2,7 @@
 
 namespace NewsApp.Repository
 {
-    public interface ICategoryReppository
+    public interface ICategoryRepository
     {
         Task<List<Category>> GetCategories();
         Task<Category> GetCategoryById(int id);
@@ -10,7 +10,7 @@ namespace NewsApp.Repository
         Task<Category> CreateCategory(Category category);
         Task<Category> UpdateCategory(Category category);
         Task<Category> DeleteCategory(Category category);
-        
+
 
     }
 }

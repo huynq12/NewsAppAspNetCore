@@ -72,6 +72,17 @@ namespace NewsApp.Repository
             return new PagedList<Post>(data, recsCount, filter.PageNumber, filter.PageSize);
         }
 
+        public async Task<bool> HasCategoryId(int[] categoryIds)
+        {
+            var isHasValue = false;
+            if (_context.PostCategories.Any(pc => categoryIds.Contains(pc.CategoryId)))
+            {
+                isHasValue = true;
+            }
+            else isHasValue = false;
+            return isHasValue;
+        }
+
         public async Task<Post> UpdatePost(Post post)
         {
             _context.Posts.Update(post);

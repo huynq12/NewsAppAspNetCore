@@ -1,0 +1,24 @@
+﻿@model Image
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+
+    <img src="~/images/@Model.MyImage" class="align-content-center" />
+    <div class="mt-2">
+        @Html.DisplayFor(model=>model.ImageDescription)
+    </div>
+    <div class="mt-2">
+        @Html.DisplayFor(model=>model.UploadTime)
+    </div>
+
+</body>
+</html>

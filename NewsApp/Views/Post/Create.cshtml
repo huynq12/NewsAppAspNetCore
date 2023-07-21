@@ -1,4 +1,5 @@
-﻿@using NewsApp.ViewModels;
+﻿
+@using NewsApp.ViewModels;
 @model PostDto
 
 @{
@@ -33,7 +34,6 @@
                         @Html.ListBoxFor(model => model.CategoryIds,
                         new MultiSelectList(Model.SelectListCats,"Value","Text"),
                         new {@class="form-control",multiple="multiple",id="Categories_dropdown"})
-                        
                     </div>
             </div>
             

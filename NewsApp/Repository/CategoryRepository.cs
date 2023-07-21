@@ -1,18 +1,17 @@
-﻿using Azure;
+﻿using NewsApp.Models;
 using Microsoft.EntityFrameworkCore;
 using NewsApp.Data;
-using NewsApp.Models;
-using System.Net.WebSockets;
+
 
 namespace NewsApp.Repository
 {
-    public class CategoryRepository : ICategoryReppository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly DataContext _context;
 
         public CategoryRepository(DataContext dataContext)
         {
-                _context = dataContext;
+            _context = dataContext;
         }
         public async Task<Category> CreateCategory(Category category)
         {
@@ -28,23 +27,23 @@ namespace NewsApp.Repository
             return category;
         }
 
-		public async Task<List<Category>> GetCategories()
+        public async Task<List<Category>> GetCategories()
         {
             return await _context.Categories.ToListAsync();
         }
 
-		public async Task<List<Category>> GetCategoriesByPostId(int postId)
-		{
+        public async Task<List<Category>> GetCategoriesByPostId(int postId)
+        {
             var query = from c in _context.Categories
                         join pc in _context.PostCategories on c.Id equals pc.CategoryId
                         where pc.PostId == postId
                         select c;
             return await query.ToListAsync();
-           
-           
-		}
 
-		public async Task<Category> GetCategoryById(int id)
+
+        }
+
+        public async Task<Category> GetCategoryById(int id)
         {
             return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
         }

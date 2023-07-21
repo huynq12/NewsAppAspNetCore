@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using NewsApp.Data;
 using NewsApp.Helpers;
 using NewsApp.Models;
@@ -27,11 +28,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 	.AddEntityFrameworkStores<DataContext>()
 	.AddDefaultTokenProviders();
 
-builder.Services.AddScoped<ICategoryReppository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<ICategoryImageRepository, CategoryImageRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -56,7 +59,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(/*new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images")),
+    RequestPath = "/wwwroot/images"
+}*/);
 
 app.UseRouting();
 app.UseAuthentication();

@@ -14,36 +14,40 @@ namespace NewsApp.Repository
         }
         public async Task<Rating> CreateRating(Rating rating)
         {
-            _context.Add(rating);
+            _context.Ratings.Add(rating);
             await _context.SaveChangesAsync();
             return rating;
         }
 
         public async Task<Rating> Delete(Rating rating)
         {
-            _context.Remove(rating);
+            _context.Ratings.Remove(rating);
             await _context.SaveChangesAsync();
             return rating;
         }
 
         public async Task<Rating?> GetRatingById(int? id)
         {
-            return await _context.Ratings.Include(x=>x.User).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Ratings.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Rating>> GetRatingsByPostId(int postId)
         {
-            return await _context.Ratings.Include(x=>x.User).Where(x => x.PostId == postId).OrderByDescending(x => x.Rate).ToListAsync(); 
+            return await _context.Ratings
+                .Include(x => x.User)
+                .Where(x => x.PostId == postId)
+                .OrderByDescending(x => x.Rate)
+                .ToListAsync();
         }
 
         public async Task<List<Rating>> GetRatings()
         {
-            return await _context.Ratings.OrderByDescending(x=>x.Rate).ToListAsync();   
+            return await _context.Ratings.OrderByDescending(x => x.Rate).ToListAsync();
         }
 
         public async Task<Rating> Update(Rating rating)
         {
-            _context.Update(rating);
+            _context.Ratings.Update(rating);
             await _context.SaveChangesAsync();
             return rating;
         }
@@ -56,7 +60,7 @@ namespace NewsApp.Repository
 
         public async Task<Rating> GetRatingByUserId(string userId)
         {
-            return await _context.Ratings.FirstOrDefaultAsync(x=>x.UserId==userId);
+            return await _context.Ratings.FirstOrDefaultAsync(x => x.UserId == userId);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace NewsApp.Data
 
         public DbSet<Image> Images { get; set; }
         public DbSet<ImageCategory> ImageCategories { get; set; }
+        public DbSet<CategoryImages> CategoryImages { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

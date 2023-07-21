@@ -1,0 +1,51 @@
+﻿@model IEnumerable<NewsApp.Models.ImageCategory>
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title class="text-center">Image Category</title>
+</head>
+<body>
+   <h3 class="text-center">Image Categories</h3>
+    <table class="table">
+        <thead>
+            <tr>
+               
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    <a class="btn btn-success" onclick="showInPopup('@Url.Action("Create","ImageCategory",null,Context.Request.Scheme)','Add image category')">Add image category</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    
+                    <td>
+                        <a class="btn btn-warning" onclick="showInPopup('@Url.Action("Edit","ImageCategory", new{id=item.Id},Context.Request.Scheme)','Edit image category')">Edit</a> |
+                        @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

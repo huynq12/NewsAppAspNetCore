@@ -15,23 +15,23 @@ namespace NewsApp.Repository
         {
             _context = dataContext;
         }
-        public async Task<ReportedList<Category,int>> GetTopCategories()
+        public async Task<ReportedList<Category, int>> GetTopCategories()
         {
             var topCategories = _context.PostCategories
                          .GroupBy(pc => pc.CategoryId) // Nhóm theo CategoryId
                          .Select(g => new { CategoryId = g.Key, Count = g.Count() }) // Chọn CategoryId và đếm số post trong mỗi category
-                         .OrderByDescending(x => x.Count) 
-                         .Take(10) 
-                         .Join(_context.Categories, pc => pc.CategoryId, c => c.Id, (pc, c) => new { Category = c, Count = pc.Count }); // Kết hợp với bảng danh mục để lấy danh mục thay vì CategoryId
+                         .OrderByDescending(x => x.Count)
+                         .Take(10)
+                         .Join(_context.Categories, pc => pc.CategoryId, c => c.Id, (pc, c) => new { Category = c, pc.Count }); // Kết hợp với bảng danh mục để lấy danh mục thay vì CategoryId
 
             List<Category> list = new List<Category>();
             List<int> count = new List<int>();
-            foreach(var category in topCategories)
+            foreach (var category in topCategories)
             {
                 list.Add(category.Category);
                 count.Add(category.Count);
             }
-            return new ReportedList<Category,int>(list, count);
+            return new ReportedList<Category, int>(list, count);
 
         }
 
@@ -62,7 +62,7 @@ namespace NewsApp.Repository
 
         }
 
-        public async Task<ReportedList<Post,int>> GetTopPostsReview()
+        public async Task<ReportedList<Post, int>> GetTopPostsReview()
         {
             var topPosts = _context.Comments
                 .GroupBy(c => c.PostId)
@@ -73,7 +73,7 @@ namespace NewsApp.Repository
                 })
                 .OrderByDescending(g => g.Count)
                 .Take(10)
-                .Join(_context.Posts, cm => cm.PostId, p => p.Id, (cm, p) => new { Post = p, Count = cm.Count });
+                .Join(_context.Posts, cm => cm.PostId, p => p.Id, (cm, p) => new { Post = p, cm.Count });
 
             List<Post> list = new List<Post>();
             List<int> count = new List<int>();
@@ -84,7 +84,7 @@ namespace NewsApp.Repository
                 count.Add(post.Count);
             }
 
-            return new ReportedList<Post,int>(list, count);
+            return new ReportedList<Post, int>(list, count);
 
 
         }

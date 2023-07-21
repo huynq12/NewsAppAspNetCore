@@ -34,7 +34,7 @@ namespace NewsApp.Repository
 
         public async Task<List<Comment>> GetComments(int postId)
         {
-            return await _context.Comments.Include(x=>x.User).Where(x=>x.PostId == postId).OrderByDescending(x => x.CreatedTime).ToListAsync();
+            return await _context.Comments.Include(x => x.User).Where(x => x.PostId == postId).OrderByDescending(x => x.CreatedTime).ToListAsync();
         }
 
         public async Task<Comment> UpdateComment(Comment comment)
