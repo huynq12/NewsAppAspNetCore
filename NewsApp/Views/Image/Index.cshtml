@@ -4,6 +4,7 @@
 
 @{
     var filter = ViewBag.Filter;
+    var imgCatId = ViewBag.ImgCatId;
 }
 
 <!DOCTYPE html>
@@ -105,25 +106,29 @@
                 {
                     <li class="page-item">
                         <a class="page-link" asp-action="Index" asp-route-pg="1"
-                        asp-route-FilterOrder="@filter.FilterOrder">First</a>
+                           asp-route-FilterOrder="@filter.FilterOrder" asp-route-CategoryIds="@imgCatId">First</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage-1)" asp-route-FilterOrder="@filter.FilterOrder">Previous</a>
+                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage-1)" 
+                        asp-route-FilterOrder="@filter.FilterOrder" asp-route-CategoryIds="@imgCatId">Previous</a>
                     </li>
                 }
                 @for (var pge = Model.StartPage; pge <= Model.EndPage; pge++)
                 {
                     <li class="page-item" @(pge == Model.CurrentPage ? "active" : "")>
-                        <a class="page-link" asp-action="Index" asp-route-pg="@pge" asp-route-FilterOrder="@filter.FilterOrder">@pge</a>
+                        <a class="page-link" asp-action="Index" asp-route-pg="@pge"
+                           asp-route-FilterOrder="@filter.FilterOrder" asp-route-CategoryIds="@imgCatId">@pge</a>
                     </li>
                 }
                 @if (Model.CurrentPage < Model.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage+1)" asp-route-FilterOrder="@filter.FilterOrder">Next</a>
+                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage+1)"
+                           asp-route-FilterOrder="@filter.FilterOrder" asp-route-CategoryIds="@imgCatId">Next</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.TotalPages)" asp-route-FilterOrder="@filter.FilterOrder">Last</a>
+                        <a class="page-link" asp-action="Index" asp-route-pg="@(Model.TotalPages)"
+                           asp-route-FilterOrder="@filter.FilterOrder" asp-route-CategoryIds="@imgCatId">Last</a>
                     </li>
                 }
             </ul>

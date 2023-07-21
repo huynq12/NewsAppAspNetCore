@@ -39,6 +39,10 @@ namespace NewsApp.Controllers
                 Value = x.Id.ToString()
             }).ToList();
             ViewBag.Filter = filter;
+            if(filter.CategoryIds != null)
+            {
+                ViewBag.ImgCatId = filter.CategoryIds.ToList().FirstOrDefault();
+            }
 
             PagedList<Models.Image> result = await _imageRepository.GetImages(filter);
 

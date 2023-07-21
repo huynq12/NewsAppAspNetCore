@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "Index";
     var filter = ViewBag.Filter;
+    var catIdFilt = ViewBag.CategoryId;
 }
 
 <h1 class="text-center ">Post</h1>
@@ -72,25 +73,25 @@
             @if (Model.CurrentPage > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pg="1" asp-route-CategoryIds="ViewBag.CategoryId">First</a>
+                    <a class="page-link" asp-action="Index" asp-route-pg="1" asp-route-CategoryIds="@catIdFilt">First</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage-1)" asp-route-CategoryIds="ViewBag.CategoryId">Previous</a>
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage-1)" asp-route-CategoryIds="@catIdFilt">Previous</a>
                 </li>
             }
             @for (var pge = Model.StartPage; pge <= Model.EndPage; pge++)
             {
                 <li class="page-item" @(pge == Model.CurrentPage ? "active" : "")>
-                    <a class="page-link" asp-action="Index" asp-route-pg="@pge" asp-route-CategoryIds="ViewBag.CategoryId">@pge</a>
+                    <a class="page-link" asp-action="Index" asp-route-pg="@pge" asp-route-CategoryIds="@catIdFilt">@pge</a>
                 </li>
             }
             @if (Model.CurrentPage < Model.TotalPages)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage+1)" asp-route-CategoryIds="ViewBag.CategoryId">Next</a>
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.CurrentPage+1)" asp-route-CategoryIds="@catIdFilt">Next</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.TotalPages)" asp-route-CategoryIds="ViewBag.CategoryId">Last</a>
+                    <a class="page-link" asp-action="Index" asp-route-pg="@(Model.TotalPages)" asp-route-CategoryIds="@catIdFilt">Last</a>
                 </li>
             }
         </ul>

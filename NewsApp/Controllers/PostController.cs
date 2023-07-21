@@ -21,7 +21,6 @@ namespace NewsApp.Controllers
         private readonly ICommentRepository _commentRepository;
         private readonly IRatingRepository _ratingRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly DataContext _context;
         private readonly IMapper _mapper;
 
 		public PostController(IPostRepository postRepository,
@@ -52,19 +51,13 @@ namespace NewsApp.Controllers
             }).ToList();
 
             ViewBag.Filter = filter;
-            /*if (!await _postRepository.HasCategoryId(filter.CategoryIds))
+            if(filter.CategoryIds != null)
             {
-                
+                ViewBag.CategoryId = filter.CategoryIds.ToList().FirstOrDefault();
             }
-            else { 
-                ViewBag.CategoryId = filter.CategoryIds[0];
-                using dropdownlist helper
-            }*/
             PagedList<Post> result = await _postRepository.GetPosts(filter);
 
             return View(result);
-
-
         }
        
 
