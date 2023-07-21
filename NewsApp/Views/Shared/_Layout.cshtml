@@ -63,10 +63,13 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Image" asp-action="Index">Image</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="ImageCategory" asp-action="Index">ImageCategory</a>
-                            </li>
-                            
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ImageCategory" asp-action="Index">ImageCategory</a>
+                                </li>
+                            }
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Home" asp-action="Index"
                                    title="Welcome">Welcome @User.Identity.Name!</a>

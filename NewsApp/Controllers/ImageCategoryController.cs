@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NewsApp.Models;
 using NewsApp.Repository;
 using System.Net.WebSockets;
 
 namespace NewsApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ImageCategoryController : Controller
     {
         private readonly ICategoryImageRepository _catImageRepository;

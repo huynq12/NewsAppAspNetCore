@@ -10,6 +10,7 @@ using NewsApp.Repository;
 using NewsApp.ViewModels;
 using NewsApp.ViewModels.Seedwork;
 using static System.Net.WebRequestMethods;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NewsApp.Controllers
 {
@@ -28,6 +29,7 @@ namespace NewsApp.Controllers
             _catImageRepository = categoryImageRepository;
             _hostingEnvironment = hostingEnvironment;
         }
+        [Authorize]
         public async Task<IActionResult> Index(Filter filter,int pg=1 )
         {
             filter.PageNumber = pg;
@@ -48,7 +50,7 @@ namespace NewsApp.Controllers
 
             return View(result);
         }
-
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Create()
         {
             var listImgCategory = await _catImageRepository.GetImageCategories();
@@ -62,7 +64,7 @@ namespace NewsApp.Controllers
             return View(model);
         }
 
-       
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(ImageDto model)
         {
@@ -92,8 +94,8 @@ namespace NewsApp.Controllers
             return RedirectToAction("Index", "Image");
            
         }
-        
 
+        [Authorize(Roles = "Admin")]
         private UploadImageRequest UploadFile(IFormFile myFile)
         {
             UploadImageRequest request = new UploadImageRequest();
@@ -117,18 +119,8 @@ namespace NewsApp.Controllers
 
             return request;
         }
-        
 
-        public async Task<IActionResult> Edit(int id)
-        {
-            var existingImage = await _imageRepository.GetImageById(id);
-
-            if (existingImage == null)
-                return BadRequest();
-
-            return View(existingImage);
-        }
-
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var existingImage = await _imageRepository.GetImageById(id);
@@ -163,6 +155,7 @@ namespace NewsApp.Controllers
              return RedirectToAction("Index","Image");
 
          }*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var existingImage = await _imageRepository.GetImageById(id);

@@ -41,15 +41,18 @@
 
 
 <body>
-    <form asp-action="Index">
-        @Html.DropDownList("CategoryIds",new SelectList(filter.SelectListCats,"Value","Text"),"--Select--")
-       
-        @Html.DropDownList("FilterOrder",Html.GetEnumSelectList<FilterOrder>(),"Sort")
-      
-        <button class="btn btn-primary" type="submit">Search</button>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <form asp-action="Index">
+            @Html.DropDownList("CategoryIds",new SelectList(filter.SelectListCats,"Value","Text"),"--Select--")
 
-    </form>
-<table class="table">
+            @Html.DropDownList("FilterOrder",Html.GetEnumSelectList<FilterOrder>(),"Sort")
+
+            <button class="btn btn-primary" type="submit">Search</button>
+
+        </form>
+    }
+    <table class="table">
     <thead>
         <tr>
             <th>
@@ -92,7 +95,11 @@
             <td>
                 @*<a class="btn btn-info" onclick="showInPopup('@Url.Action("Edit","Image",new{id=item.Id},Context.Request.Scheme)','Edit image')">Edit</a> |*@
                 <a class="btn btn-warning" onclick="showInPopup('@Url.Action("Details","Image",new{id=item.Id},Context.Request.Scheme)','Details')">Details</a> |
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                        }
             </td>
         </tr>
 }
